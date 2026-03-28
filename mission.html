@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mission Input - ORBITA</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 32px;
+      background: #0f172a;
+      color: white;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: #1e293b;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      color: #cbd5e1;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #e2e8f0;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      margin-bottom: 18px;
+      font-size: 16px;
+    }
+
+    select {
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    button {
+      background: #3b82f6;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.95;
+    }
+
+    .back-button {
+      background: #475569;
+    }
+
+    .checkbox-group {
+      margin-bottom: 20px;
+      background: #334155;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .checkbox-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .checkbox-item input {
+      width: auto;
+      transform: scale(1.2);
+    }
+
+    .checkbox-item label {
+      margin: 0;
+      font-weight: normal;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Görev Bilgileri</h1>
+      <p class="subtitle">Görevinizi tanımlayın, biz sizin için uygun partnerleri analiz edelim.</p>
+
+      <label for="missionType">Görev Türü</label>
+      <select id="missionType">
+        <option value="Earth Observation">Yer Gözlem</option>
+        <option value="Communication">Haberleşme</option>
+        <option value="Tech Demo">Teknoloji Demo</option>
+        <option value="Research">Araştırma</option>
+      </select>
+
+      <label for="platformSize">Platform Boyutu</label>
+      <select id="platformSize">
+        <option value="1U">1U</option>
+        <option value="3U" selected>3U</option>
+        <option value="6U">6U</option>
+      </select>
+
+      <label for="budgetLevel">Bütçe Seviyesi</label>
+      <select id="budgetLevel">
+        <option value="Low">Düşük</option>
+        <option value="Medium" selected>Orta</option>
+        <option value="High">Yüksek</option>
+      </select>
+
+      <label>Test İhtiyaçları</label>
+      <div class="checkbox-group">
+        <div class="checkbox-item">
+          <input type="checkbox" id="thermalTest">
+          <label for="thermalTest">Thermal Test</label>
+        </div>
+
+        <div class="checkbox-item">
+          <input type="checkbox" id="vibrationTest">
+          <label for="vibrationTest">Vibration Test</label>
+        </div>
+      </div>
+
+      <button onclick="goToResults()">Analiz Et</button>
+      <button class="back-button" onclick="window.location.href='index.html'">Ana Sayfaya Dön</button>
+    </div>
+  </div>
+
+  <script>
+    function goToResults() {
+      const missionType = document.getElementById("missionType").value;
+      const platformSize = document.getElementById("platformSize").value;
+      const budgetLevel = document.getElementById("budgetLevel").value;
+      const thermalTest = document.getElementById("thermalTest").checked;
+      const vibrationTest = document.getElementById("vibrationTest").checked;
+
+      const requestData = {
+        missionType: missionType,
+        platformSize: platformSize,
+        budgetLevel: budgetLevel,
+        thermalTest: thermalTest,
+        vibrationTest: vibrationTest
+      };
+
+      localStorage.setItem("missionRequest", JSON.stringify(requestData));
+      window.location.href = "results.html";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sonuçlar - ORBITA</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 30px;
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    .partner {
+      background: #334155;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .score {
+      background: #22c55e;
+      color: black;
+      padding: 5px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-top: 8px;
+    }
+
+    .green { border-left: 5px solid #22c55e; }
+    .yellow { border-left: 5px solid #facc15; }
+    .red { border-left: 5px solid #ef4444; }
+
+    .summary-box {
+      background: #334155;
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 10px;
+      line-height: 1.8;
+    }
+
+    .summary-box strong {
+      color: #93c5fd;
+    }
+
+    button {
+      padding: 12px;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      background: #475569;
+      color: white;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="card">
+    <div class="title">Analiz Sonuçları</div>
+
+    <div class="summary-box">
+      <div><strong>Görev Türü:</strong> <span id="summaryMissionType"></span></div>
+      <div><strong>Platform Boyutu:</strong> <span id="summaryPlatformSize"></span></div>
+      <div><strong>Bütçe Seviyesi:</strong> <span id="summaryBudgetLevel"></span></div>
+      <div><strong>Thermal Test:</strong> <span id="summaryThermalTest"></span></div>
+      <div><strong>Vibration Test:</strong> <span id="summaryVibrationTest"></span></div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- 🟢 RECOMMENDATIONS -->
+    <div class="card green">
+      <div class="title">Önerilen Partnerler</div>
+      <div id="recommendations"></div>
+    </div>
+
+    <div>
+
+      <!-- 🟡 MISSING -->
+      <div class="card yellow">
+        <div class="title">Eksik Kapasiteler</div>
+        <div id="missing"></div>
+      </div>
+
+      <!-- 🔴 RISKS -->
+      <div class="card red">
+        <div class="title">Riskler</div>
+        <div id="risks"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <button onclick="window.location.href='mission.html'">Geri</button>
+
+</div>
+
+<script>
+window.onload = function () {
+  // localStorage'dan veriyi alırken isimlerin senin Backend'deki MissionRequest.cs ile 
+  // uyumlu olduğundan emin olmalısınız. (Örn: requireThermal)
+  const requestData = JSON.parse(localStorage.getItem("missionRequest"));
+
+  if (!requestData) {
+    alert("Veri bulunamadı");
+    return;
+  }
+
+  fetch("https://7hhczlbn-7206.euw.devtunnels.ms/api/Decision/evaluate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(requestData)
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("API hatası");
+    return res.json();
+  })
+  .then(data => {
+    renderResults(data, requestData);
+  })
+  .catch(err => {
+    console.log("Bağlantı hatası:", err);
+    // Hata durumunda boş kalmaması için basit bir uyarı veya fake data eklenebilir
+  });
+};
+
+function renderResults(data, requestData) {
+  // Üst özet bilgilerini doldur
+  document.getElementById("summaryMissionType").innerText = data.missionType || "-";
+  document.getElementById("summaryPlatformSize").innerText = data.platformSize || "-";
+  // Backend'den gelen veriye göre (requireThermal/vibration isimlerine dikkat)
+  document.getElementById("summaryThermalTest").innerText = requestData.requireThermal ? "Evet" : "Hayır";
+  document.getElementById("summaryVibrationTest").innerText = requestData.requireVibration ? "Evet" : "Hayır";
+
+  const recDiv = document.getElementById("recommendations");
+  const riskDiv = document.getElementById("risks");
+
+  recDiv.innerHTML = "";
+  riskDiv.innerHTML = "";
+
+  // 1. ŞİRKET KARTLARINI ÇİZ (Yeni etiketli sistem)
+  data.recommendations.forEach(item => {
+    // Yeşil Etiketler (Uyanlar)
+    const matchedHtml = item.matchedFeatures.map(f => 
+        <span style="background:#052e16; color:#22c55e; padding:3px 10px; border-radius:12px; font-size:11px; margin-right:5px; display:inline-block; margin-bottom:5px;">✓ ${f}</span>
+    ).join("");
+
+    // Kırmızı Etiketler (Eksikler)
+    const missingHtml = item.missingFeatures.map(f => 
+        <span style="background:#450a0a; color:#f87171; padding:3px 10px; border-radius:12px; font-size:11px; margin-right:5px; display:inline-block; margin-bottom:5px;">✗ ${f}</span>
+    ).join("");
+
+    recDiv.innerHTML += `
+      <div class="partner" style="margin-bottom:20px; border-bottom:1px solid #334155; padding-bottom:15px;">
+        <b style="font-size:18px; color:#93c5fd;">${item.companyName}</b>
+        <p style="margin:10px 0;">${item.explanation}</p>
+        <div class="features" style="margin-top:10px;">
+            <div>${matchedHtml}</div>
+            <div style="margin-top:5px;">${missingHtml}</div>
+        </div>
+        <div class="score" style="margin-top:10px; font-weight:bold; color:#22c55e;">Skor: ${item.score}</div>
+      </div>
+    `;
+  });
+
+  // 2. GENEL RİSKLERİ ÇİZ
+  if(data.risks && data.risks.length > 0) {
+      data.risks.forEach(r => {
+        riskDiv.innerHTML += <p style="color:#f87171; font-size:14px;">⚠️ ${r}</p>;
+      });
+  } else {
+      riskDiv.innerHTML = "<p>Düşük risk seviyesi.</p>";
+  }
+}
+</script><script>
+window.onload = function () {
+  // localStorage'dan veriyi alırken isimlerin senin Backend'deki MissionRequest.cs ile 
+  // uyumlu olduğundan emin olmalısınız. (Örn: requireThermal)
+  const requestData = JSON.parse(localStorage.getItem("missionRequest"));
+
+  if (!requestData) {
+    alert("Veri bulunamadı");
+    return;
+  }
+
+  fetch("https://7hhczlbn-7206.euw.devtunnels.ms/api/Decision/evaluate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(requestData)
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("API hatası");
+    return res.json();
+  })
+  .then(data => {
+    renderResults(data, requestData);
+  })
+  .catch(err => {
+    console.log("Bağlantı hatası:", err);
+    // Hata durumunda boş kalmaması için basit bir uyarı veya fake data eklenebilir
+  });
+};
+
+function renderResults(data, requestData) {
+  // Üst özet bilgilerini doldur
+  document.getElementById("summaryMissionType").innerText = data.missionType || "-";
+  document.getElementById("summaryPlatformSize").innerText = data.platformSize || "-";
+  // Backend'den gelen veriye göre (requireThermal/vibration isimlerine dikkat)
+  document.getElementById("summaryThermalTest").innerText = requestData.requireThermal ? "Evet" : "Hayır";
+  document.getElementById("summaryVibrationTest").innerText = requestData.requireVibration ? "Evet" : "Hayır";
+
+  const recDiv = document.getElementById("recommendations");
+  const riskDiv = document.getElementById("risks");
+
+  recDiv.innerHTML = "";
+  riskDiv.innerHTML = "";
+
+  // 1. ŞİRKET KARTLARINI ÇİZ (Yeni etiketli sistem)
+  data.recommendations.forEach(item => {
+    // Yeşil Etiketler (Uyanlar)
+    const matchedHtml = item.matchedFeatures.map(f => 
+        <span style="background:#052e16; color:#22c55e; padding:3px 10px; border-radius:12px; font-size:11px; margin-right:5px; display:inline-block; margin-bottom:5px;">✓ ${f}</span>
+    ).join("");
+
+    // Kırmızı Etiketler (Eksikler)
+    const missingHtml = item.missingFeatures.map(f => 
+        <span style="background:#450a0a; color:#f87171; padding:3px 10px; border-radius:12px; font-size:11px; margin-right:5px; display:inline-block; margin-bottom:5px;">✗ ${f}</span>
+    ).join("");
+
+    recDiv.innerHTML += `
+      <div class="partner" style="margin-bottom:20px; border-bottom:1px solid #334155; padding-bottom:15px;">
+        <b style="font-size:18px; color:#93c5fd;">${item.companyName}</b>
+        <p style="margin:10px 0;">${item.explanation}</p>
+        <div class="features" style="margin-top:10px;">
+            <div>${matchedHtml}</div>
+            <div style="margin-top:5px;">${missingHtml}</div>
+        </div>
+        <div class="score" style="margin-top:10px; font-weight:bold; color:#22c55e;">Skor: ${item.score}</div>
+      </div>
+    `;
+  });
+
+  // 2. GENEL RİSKLERİ ÇİZ
+  if(data.risks && data.risks.length > 0) {
+      data.risks.forEach(r => {
+        riskDiv.innerHTML += <p style="color:#f87171; font-size:14px;">⚠️ ${r}</p>;
+      });
+  } else {
+      riskDiv.innerHTML = "<p>Düşük risk seviyesi.</p>";
+  }
+}
+</script>
+
+</body>
+</html>

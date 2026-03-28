@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ORBITA</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background-image: linear-gradient(rgba(15, 23, 42, 0.65), rgba(15, 23, 42, 0.65)), url("satellite.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      text-align: center;
+      max-width: 700px;
+      padding: 32px;
+    }
+
+    h1 {
+      font-size: 56px;
+      margin-bottom: 12px;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      color: #e2e8f0;
+      margin-bottom: 32px;
+      font-size: 20px;
+      line-height: 1.5;
+    }
+
+    button {
+      padding: 16px 32px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>ORBITA</h1>
+
+    <p class="subtitle">
+      Görev Bazlı CubeSat Partner Seçim Sistemi
+    </p>
+
+    <button onclick="window.location.href='./mission.html'">Başla</button>
+  </div>
+
+</body>
+</html>
