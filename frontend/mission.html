@@ -151,24 +151,26 @@
   </div>
 
   <script>
-    function goToResults() {
-      const missionType = document.getElementById("missionType").value;
-      const platformSize = document.getElementById("platformSize").value;
-      const budgetLevel = document.getElementById("budgetLevel").value;
-      const thermalTest = document.getElementById("thermalTest").checked;
-      const vibrationTest = document.getElementById("vibrationTest").checked;
+   function goToResults() {
+  const missionType = document.getElementById("missionType").value;
+  const platformSize = document.getElementById("platformSize").value;
+  const budgetLevel = document.getElementById("budgetLevel").value;
+  
+  // İsimleri senin Backend ile uyumlu hale getirdik:
+  const requireThermal = document.getElementById("thermalTest").checked;
+  const requireVibration = document.getElementById("vibrationTest").checked;
 
-      const requestData = {
-        missionType: missionType,
-        platformSize: platformSize,
-        budgetLevel: budgetLevel,
-        thermalTest: thermalTest,
-        vibrationTest: vibrationTest
-      };
+  const requestData = {
+    missionType: missionType,
+    platformSize: platformSize,
+    budgetLevel: budgetLevel,
+    requireThermal: requireThermal, // Backend bunu bekliyor
+    requireVibration: requireVibration // Backend bunu bekliyor
+  };
 
-      localStorage.setItem("missionRequest", JSON.stringify(requestData));
-      window.location.href = "results.html";
-    }
+  localStorage.setItem("missionRequest", JSON.stringify(requestData));
+  window.location.href = "results.html";
+}
   </script>
 </body>
 </html>
