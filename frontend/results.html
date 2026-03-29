@@ -31,18 +31,17 @@
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
 
-   body {
-  margin: 0;
-  font-family: Inter, Arial, sans-serif;
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-
-  background:
-    linear-gradient(90deg, rgba(2,6,23,0.9) 0%, rgba(2,6,23,0.6) 40%, rgba(2,6,23,0.3) 100%),
-    linear-gradient(rgba(2,6,23,0.4), rgba(2,6,23,0.85)),
-    url('uzay.jpg') center right / cover no-repeat;
-}
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background:
+        linear-gradient(90deg, rgba(2,6,23,0.9) 0%, rgba(2,6,23,0.6) 40%, rgba(2,6,23,0.3) 100%),
+        linear-gradient(rgba(2,6,23,0.4), rgba(2,6,23,0.85)),
+        url('uzay.jpg') center right / cover no-repeat;
+    }
 
     body::before {
       content: "";
@@ -380,11 +379,19 @@
     .score-value small { color: #86efac; font-size: 13px; font-weight: 700; margin-left: 6px; }
 
     .score-track {
-      width: 100%; height: 10px; border-radius: 999px; background: rgba(148, 163, 184, 0.14); overflow: hidden; margin-bottom: 10px;
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.14);
+      overflow: hidden;
+      margin-bottom: 10px;
     }
 
     .score-fill {
-      height: 100%; border-radius: 999px; background: linear-gradient(90deg, #22c55e, #4ade80); box-shadow: 0 0 20px rgba(74, 222, 128, 0.24);
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #4ade80);
+      box-shadow: 0 0 20px rgba(74, 222, 128, 0.24);
     }
 
     .score-note, .partner-text { color: var(--muted); }
@@ -578,7 +585,10 @@
     .btn-primary::before {
       content: "";
       position: absolute;
-      top: 0; left: -120%; width: 70%; height: 100%;
+      top: 0;
+      left: -120%;
+      width: 70%;
+      height: 100%;
       background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
       transform: skewX(-24deg);
       transition: left 0.75s ease;
@@ -634,6 +644,24 @@
     .mini-stat strong { display: block; color: white; font-size: 22px; margin-bottom: 6px; }
     .mini-stat span { color: var(--muted); font-size: 13px; line-height: 1.45; }
 
+    .prototype-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .prototype-image {
+      width: 100%;
+      max-width: 280px;
+      height: 190px;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      box-shadow: 0 12px 24px rgba(2, 6, 23, 0.22);
+      background: rgba(15, 23, 42, 0.6);
+    }
+
     @keyframes spin { to { transform: rotate(360deg); } }
     @keyframes spinSlow { from { transform: translateY(-50%) rotate(0deg); } to { transform: translateY(-50%) rotate(360deg); } }
     @keyframes pulseGlow { 0%, 100% { opacity: 0.22; transform: scale(1); } 50% { opacity: 0.34; transform: scale(1.06); } }
@@ -648,6 +676,7 @@
       .detail-layout { grid-template-columns: 1fr; }
       .metrics-grid, .detail-stats-grid { grid-template-columns: 1fr; }
       .donut-chart { --size: 170px; }
+      .prototype-image { max-width: 100%; }
     }
 
     @media (max-width: 760px) {
@@ -822,7 +851,7 @@
       document.getElementById("summaryThermalTest").innerText = requestData.requireThermal ? "Gerekli" : "Yok";
       document.getElementById("summaryVibrationTest").innerText = requestData.requireVibration ? "Gerekli" : "Yok";
 
-      fetch("https://37fpx200-7206.euw.devtunnels.ms/api/Decision/evaluate", {
+      fetch("https://3kvgg6jp-7206.euw.devtunnels.ms/api/Decision/evaluate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestData)
@@ -913,7 +942,7 @@
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
-        .replace(/\"/g, "&quot;")
+        .replace(/"/g, "&quot;")
         .replace(/'/g, "&#39;");
     }
 
@@ -1032,19 +1061,34 @@
                 <div class="detail-stats-grid">
                   <div class="detail-stat">
                     <div class="detail-stat-label">Reliability</div>
-                    <div class="detail-stat-value"><span class="feature-chip ${getReliabilityClass(item.reliability)}">${escapeHtml(item.reliability || "-")}</span></div>
+                    <div class="detail-stat-value">
+                      <span class="feature-chip ${getReliabilityClass(item.reliability)}">${escapeHtml(item.reliability || "-")}</span>
+                    </div>
                   </div>
                   <div class="detail-stat">
                     <div class="detail-stat-label">Açıklama</div>
-                    <div class="detail-stat-value" style="font-size:14px; font-weight:600; color:#cbd5e1;">${escapeHtml(item.explanation || "Açıklama bulunmuyor.")}</div>
+                    <div class="detail-stat-value" style="font-size:14px; font-weight:600; color:#cbd5e1;">
+                      ${escapeHtml(item.explanation || "Açıklama bulunmuyor.")}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="detail-section">
-              <h4 class="detail-title">Uyumluluk Skoru</h4>
-              ${buildDonutChart(item)}
+            <div style="display:grid; gap:16px;">
+              <div class="detail-section">
+                <h4 class="detail-title">Uyumluluk Skoru</h4>
+                ${buildDonutChart(item)}
+              </div>
+
+              <div class="detail-section prototype-box">
+                <h4 class="detail-title">Şirketlerin Çıkarttıkları Prototipler</h4>
+                ${
+                  item.imageUrl
+                    ? `<img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.companyName)} prototipi" class="prototype-image" />`
+                    : `<div class="notice warn">Prototip görseli bulunamadı.</div>`
+                }
+              </div>
             </div>
           </div>
         </div>
